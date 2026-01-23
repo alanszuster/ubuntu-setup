@@ -6,6 +6,7 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+echo
 echo -e "${GREEN}Network Info${NC}"
 echo "----------------------------"
 
@@ -16,6 +17,7 @@ hostname -I | awk '{print $1}'
 # Public IP
 echo -e "\n${YELLOW}Public IP:${NC}"
 curl -s ifconfig.me || echo "n/a"
+echo
 
 # Interface
 echo -e "\n${YELLOW}Interface:${NC}"
@@ -30,6 +32,14 @@ ip route | grep default | awk '{print $3}' | head -n1
 # DNS
 echo -e "\n${YELLOW}DNS Servers:${NC}"
 grep "^nameserver" /etc/resolv.conf | awk '{print $2}'
+
+# DHCP Server
+echo -e "\n${YELLOW}DHCP Server:${NC}"
+ACTIVE_CONN=$(nmcli -t -f NAME connection show --active 2>/dev/null | head -n1)
+if [ -n "$ACTIVE_CONN" ]; then
+    DHCP_SERVER=$(nmcli -f DHCP4 connection show "$ACTIVE_CONN" 2>/dev/null | grep "dhcp_server_identifier" | awk '{print $NF}')
+fi
+[ -n "$DHCP_SERVER" ] && echo "$DHCP_SERVER" || echo "n/a"
 
 # Routing
 echo -e "\n${YELLOW}Routing Table:${NC}"
@@ -73,3 +83,4 @@ if ping -c 1 8.8.8.8 &> /dev/null; then
 else
     echo -e "${YELLOW}✗${NC} Offline"
 fi
+echo
