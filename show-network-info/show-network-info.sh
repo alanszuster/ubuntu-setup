@@ -43,7 +43,7 @@ fi
 
 # Routing
 echo -e "\n${YELLOW}Routing Table:${NC}"
-ip route show | head -n 5
+ip route show | head -n 10
 
 # WiFi Info
 echo -e "\n${YELLOW}WiFi:${NC}"
